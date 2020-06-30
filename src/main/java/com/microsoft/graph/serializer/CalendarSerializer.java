@@ -25,9 +25,11 @@ package com.microsoft.graph.serializer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  * Serializes and deserializes a string
@@ -117,14 +119,20 @@ public final class CalendarSerializer {
         	datePattern = "yyyy-MM-dd'T'HH:mm:ss";
         }
 
-        
-        final SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
-        dateFormat.setTimeZone(TimeZone.getDefault());
+        ////////////////////////////////////////////////////////////////////////////////
+        // The letter 'XXX' is supported since Android Nougat (24+).
+        // This patch is to overcome it with Joda.
+        ////////////////////////////////////////////////////////////////////////////////
 
-        final Date date = dateFormat.parse(modifiedStrVal);
+        // final SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
+        // dateFormat.setTimeZone(TimeZone.getDefault());
+        // final Date date = dateFormat.parse(modifiedStrVal);
+        // calendar.setTime(date);
+
+        final DateTime date = new DateTime(modifiedStrVal, DateTimeZone.forTimeZone(TimeZone.getDefault()));
 
         final Calendar calendar = java.util.Calendar.getInstance();
-        calendar.setTime(date);
+        calendar.setTime(date.toDate());
         return calendar;
     }
 

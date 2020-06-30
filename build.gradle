@@ -38,6 +38,9 @@ dependencies {
     
     // Core Http library 
     compile('com.microsoft.graph:microsoft-graph-core:1.0.0')
+
+    // Replace SimpleDataFormat
+    compile group: 'joda-time', name: 'joda-time', version: '2.6'
 }
 
 def pomConfig = {
@@ -133,6 +136,14 @@ publishing {
 				}
 			}
 		}
+
+        // Github Packages Repository
+        gpr(MavenPublication) {
+            groupId 'com.microsoft.graph'
+            artifactId 'microsoft-graph'
+            version "${mavenMajorVersion}.${mavenMinorVersion}.${mavenPatchVersion}${mavenArtifactSuffix}"
+            from components.java
+        }
     }
 	repositories {
         maven {
@@ -188,6 +199,16 @@ publishing {
     			}
             }
 		}
+
+        // Github Packages Repository
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/morimoriysmoon/msgraph-sdk-java")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            }
+        }
     }
 
 }
